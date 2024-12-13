@@ -1,0 +1,6 @@
+pip install -U phidata
+pip install -U openai
+pip install --upgrade openai
+pip install duckduckgo-search
+pip install googlesearch-python
+pip install pycountry
