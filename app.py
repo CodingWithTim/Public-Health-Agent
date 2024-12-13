@@ -29,15 +29,19 @@ def login_form(db):
 def signup_form(db):
     signup_username = st.text_input("New Username", key="signup_username")
     signup_password = st.text_input("New Password", type="password", key="signup_password")
-    personal_name = st.text_input("Full Name (Optional)", key="personal_name")
-    personal_email = st.text_input("Email (Optional)", key="personal_email")
+    location = st.text_input("Your Location (City, State, Country)", key="location")
+    age = st.text_input("Your Age", key="age")
+    occupation = st.text_input("Your Occupation", key="occupation")
+    company = st.text_input("Your Company", key="company")
     if st.button("Sign Up"):
         if db.user_exists(signup_username):
             st.error("Username already exists. Please choose a different one.")
         else:
             personal_info = {
-                "name": personal_name,
-                "email": personal_email
+                "location": location,
+                "age": age,
+                "occupation": occupation,
+                "company": company,
             }
             db.create_account(signup_username, signup_password, personal_info)
             st.success("Account created successfully! You can now log in.")
@@ -58,14 +62,14 @@ else:
     personal_info = user_data.get("personal_info", {})
 
     st.sidebar.title("User Info")
-    st.sidebar.write("**Name:**", personal_info.get("name", "Not provided"))
-    st.sidebar.write("**Email:**", personal_info.get("email", "Not provided"))
+    for k, v in personal_info.items():
+        st.sidebar.write(f"**{k}:**", v)
 
     if st.sidebar.button("Logout"):
         st.session_state.logged_in = False
         st.session_state.username = None
         st.session_state.messages = []
-        st.experimental_rerun()
+        # st.experimental_rerun()
 
     # Display existing messages
     for message in st.session_state.messages:
@@ -82,7 +86,7 @@ else:
         with st.chat_message("assistant"):
             with st.spinner("I am thinking..."):
                 # Get assistant response
-                response = st.write_stream(stream_agentic_response(prompt))
+                response = st.write_stream(stream_agentic_response(prompt, personal_info))
         
         st.session_state.messages.append({"role": "assistant", "content": response})
 
